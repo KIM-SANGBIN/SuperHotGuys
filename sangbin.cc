@@ -115,8 +115,8 @@ void startgameinitialobject();
 void DrawMain();
 void DrawStartGame();
 void SetStartPosition();
-
-
+void checkimponum();
+void checkpersonnum();
 void EnemyAction();
 void DrawEnemy();
 void Draw();
@@ -126,15 +126,22 @@ void EnemyInitialObject();
 void CheckCrash();
 void selectimpoobject();
 void selectimpoaction();
-int selectimpoaction2();
+void selectimpoaction2();
 void drawselectimpo();
 //----------------------------------------//
 
 //----------------함수들--------------//
 
 
+struct impoinfo
+{
+	int num;
+};
 
-
+struct personinfo
+{
+	int num;
+};
 struct EnemyInfo {
 	int x, y;
 	int liveFlag;
@@ -158,9 +165,9 @@ struct selectinfo
 {
 	int x, y;
 };
-
+struct personinfo person;
 struct startinfo startgame;
-
+struct impoinfo imposter;
 struct EnemyInfo enemy[ENEMY_NUM];
 struct selectinfo selectimpo;
 
@@ -193,6 +200,7 @@ void main()
 		{
 			EnemyAction();            
 			selectimpoaction();
+			selectimpoaction2();
 			Draw();
 
 
@@ -230,6 +238,10 @@ void main()
 				CheckCrash();
 			}
 		}
+		if (CheckEndGame() == 1)
+			break;
+		if (CheckClearGame() == 1)
+			break;
 		Sleep(1);
 		count++;
 	}
@@ -359,19 +371,202 @@ int StartGameAction2()
 	}
 }
 
-int selectimpoaction2()
+void selectimpoaction2()
 {
-	if (stagecount == 0)
+	if (stagecount == 1)
 	{
 		if ((GetAsyncKeyState(VK_RETURN) & 0x8000))
 		{
-			if (startgame.y == 21)
+			if (selectimpo.y == 20)
 			{
-				return 1;
+				if (enemy[0].isimpo == 1)
+				{
+					enemy[0].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is Imposter!", enemy[0].name);
+
+					Sleep(1000);
+				}
+				else
+				{
+					enemy[0].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is not Imposter!", enemy[0].name);
+
+					Sleep(1000);
+				}
 			}
-			else if (startgame.y == 22)
+			if (selectimpo.y == 21)
 			{
-				return 2;
+				if (enemy[1].isimpo == 1)
+				{
+					enemy[1].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is Imposter!", enemy[1].name);
+
+					Sleep(1000);
+				}
+				else
+				{
+					enemy[1].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is not Imposter!", enemy[1].name);
+
+					Sleep(1000);
+				}
+			}
+			if (selectimpo.y == 22)
+			{
+				if (enemy[2].isimpo == 1)
+				{
+					enemy[2].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is Imposter!", enemy[2].name);
+
+					Sleep(1000);
+				}
+				else
+				{
+					enemy[2].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is not Imposter!", enemy[2].name);
+
+					Sleep(1000);
+				}
+			}
+			if (selectimpo.y == 23)
+			{
+				if (enemy[3].isimpo == 1)
+				{
+					enemy[3].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is Imposter!", enemy[3].name);
+
+
+					Sleep(1000);
+				}
+				else
+				{
+					enemy[3].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is not Imposter!", enemy[3].name);
+
+					Sleep(1000);
+				}
+			}
+			if (selectimpo.y == 24)
+			{
+				if (enemy[4].isimpo == 1)
+				{
+					enemy[4].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is Imposter!", enemy[4].name);
+
+					Sleep(1000);
+				}
+				else
+				{
+					enemy[4].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is not Imposter!", enemy[4].name);
+
+					Sleep(1000);
+				}
+			}
+			if (selectimpo.y == 25)
+			{
+				if (enemy[5].isimpo == 1)
+				{
+					enemy[5].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is Imposter!", enemy[5].name);
+
+					Sleep(1000);
+				}
+				else
+				{
+					enemy[5].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is not Imposter!", enemy[5].name);
+
+					Sleep(1000);
+				}
+			}
+			if (selectimpo.y == 26)
+			{
+				if (enemy[6].isimpo == 1)
+				{
+					enemy[6].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is Imposter!", enemy[6].name);
+
+					Sleep(1000);
+				}
+				else
+				{
+					enemy[6].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is not Imposter!", enemy[6].name);
+
+					Sleep(1000);
+				}
+			}
+			if (selectimpo.y == 27)
+			{
+				if (enemy[7].isimpo == 1)
+				{
+					enemy[7].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is Imposter!", enemy[7].name);
+
+					Sleep(1000);
+				}
+				else
+				{
+					enemy[7].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is not Imposter!", enemy[7].name);
+
+					Sleep(1000);
+				}
+			}
+			if (selectimpo.y == 28)
+			{
+				if (enemy[8].isimpo == 1)
+				{
+					enemy[8].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is Imposter!", enemy[8].name);
+
+					Sleep(1000);
+				}
+				else
+				{
+					enemy[8].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is not Imposter!", enemy[8].name);
+
+					Sleep(1000);
+				}
+			}
+			if (selectimpo.y == 29)
+			{
+				if (enemy[9].isimpo == 1)
+				{
+					enemy[9].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is Imposter!", enemy[9].name);
+
+					Sleep(1000);
+				}
+				else
+				{
+					enemy[9].liveFlag = 0;
+					MoveCursor(30, 25);
+					printf("%c is not Imposter!", enemy[9].name);
+
+					Sleep(1000);
+				}
 			}
 		}
 	}
@@ -382,7 +577,8 @@ int selectimpoaction2()
 void SetStartPosition() {
 
 	Initial();                    // 커서 안보이게
-
+	imposter.num = IMPO_NUM;
+	person.num = ENEMY_NUM;
 	EnemyInitialObject();
 
 }
@@ -754,9 +950,11 @@ void Draw()
 		printf(screen[i]);        //    화면의 i번째행 을 출력   ==  printf("%s",screen[i]);
 
 		MoveCursor(70, 23);
-		printf("Left Imposter : %d", IMPO_NUM);
+		checkimponum();
+		printf("Left Imposter : %d", imposter.num);
 		MoveCursor(70, 24);
-		printf("selectimpo.y : %d", selectimpo.y);
+		checkpersonnum();
+		printf("Left Person : %d", person.num);
 
 	}
 }
@@ -853,6 +1051,32 @@ void EnemyInitialObject()
 	}
 }
 
+void checkimponum()
+{
+	int count=0;
+	for (int i = 0; i < ENEMY_NUM; i++)
+	{
+		if (enemy[i].isimpo && enemy[i].liveFlag)
+		{
+			count++;
+		}
+	}
+	imposter.num = count;
+}
+
+void checkpersonnum()
+{
+	int count = 0;
+	for (int i = 0; i < ENEMY_NUM; i++)
+	{
+		if (enemy[i].isimpo==0 && enemy[i].liveFlag)
+		{
+			count++;
+		}
+	}
+	person.num = count;
+}
+
 void CheckCrash()
 {
 	int i,j;
@@ -865,34 +1089,45 @@ void CheckCrash()
 				if (abs(enemy[i].x - enemy[j].x) <= 1 && abs(enemy[i].y - enemy[j].y) <= 1 && enemy[j].isimpo == 0)
 				{
 					enemy[j].liveFlag = 0;
+
 				}
 			}
 		}
 	}
 }
 
-/*int CheckEndGame()
+int CheckEndGame()
+{
+	checkpersonnum();
+	if (person.num == 0)
 	{
+		MoveCursor(36, 12);
+		printf("******************** Fail!! **************************");
+		MoveCursor(0, 24);
+		Sleep(10000);
+
+		return 1;
 
 	}
- */
 
-/*int CheckClearGame()
+	else
+		return 0;
+}
+
+
+int CheckClearGame()
+{
+	checkimponum();
+	if (imposter.num == 0)
 	{
-	int i;
-	for (i = 0; i < ENEMY_NUM; i++)
-	{
-	if (enemy[i].liveFlag == 1)
-	{
-	return 0;
+		MoveCursor(36, 12);
+		printf("******************** Clear!! **************************");
+		MoveCursor(0, 24);
+		Sleep(10000);
+		return 1;
 	}
-	}
-	MoveCursor(36, 12);
-	printf(" Stage Clear ");
-	MoveCursor(0, 24);
-	Sleep(1000);
-	return 1;
-	}*/
+	else return 0;
+}
 //------------------------------------------------------//
 
 
