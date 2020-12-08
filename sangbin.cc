@@ -115,8 +115,8 @@ void startgameinitialobject();
 void DrawMain();
 void DrawStartGame();
 void SetStartPosition();
-void PlayerInitialObject();
-void PlayerAction();
+
+
 void EnemyAction();
 void DrawEnemy();
 void Draw();
@@ -124,16 +124,16 @@ int CheckEndGame();
 int CheckClearGame();
 void EnemyInitialObject();
 void CheckCrash();
+void selectimpoobject();
+void selectimpoaction();
+int selectimpoaction2();
+void drawselectimpo();
 //----------------------------------------//
 
 //----------------함수들--------------//
 
 
-struct PlayerInfo
-{
-	int x, y;
-	int liveFlag;        // 플레이어가 살았는지를 나타낸다. 1로초기화시키고 죽으면 0이되어 게임을 끝낸다.
-};
+
 
 struct EnemyInfo {
 	int x, y;
@@ -154,10 +154,15 @@ struct startinfo
 	int x, y;
 };
 
+struct selectinfo
+{
+	int x, y;
+};
 
 struct startinfo startgame;
-struct PlayerInfo player;
+
 struct EnemyInfo enemy[ENEMY_NUM];
+struct selectinfo selectimpo;
 
 //--------------------struct-----------------------//
 
@@ -181,13 +186,15 @@ void main()
 		Sleep(100);
 	}
 	SetStartPosition();
+	selectimpoobject();
 	while (stagecount == 1)
 	{
 		if (stagecount == 1)
 		{
-			EnemyAction();
+			EnemyAction();            
+			selectimpoaction();
 			Draw();
-			//PlayerAction();
+
 
 			/*if (CheckEndGame() == 1)
 				break;
@@ -251,12 +258,40 @@ void startgameaction()
 	}
 }
 
+void selectimpoaction()
+{
+
+	if ((GetAsyncKeyState(VK_UP) & 0x8000))
+	{
+		if (selectimpo.y > 20)
+		{
+			selectimpo.y--;
+		}
+	}
+	if ((GetAsyncKeyState(VK_DOWN) & 0x8000))
+	{
+		if (selectimpo.y < 29)
+		{
+			selectimpo.y++;
+		}
+	}
+
+}
+
 void startgameinitialobject()
 {
 	startgame.x = 32;
 	startgame.y = 21;
 	int x = startgame.x;
 	int y = startgame.y;
+}
+
+void selectimpoobject()
+{
+	selectimpo.x = 50;
+	selectimpo.y = 20;
+	int x = selectimpo.x;
+	int y = selectimpo.y;
 }
 
 void DrawStartGame()
@@ -269,6 +304,20 @@ void DrawStartGame()
 	{
 		if (x >= 31 && x < 33 && y >= 21 && y <= 22)
 			MainScreen[y][x] = startcursor[i];
+		x++;
+	}
+}
+
+void drawselectimpo()
+{
+	int i;
+	int x = selectimpo.x - 1;
+	int y = selectimpo.y;
+
+	for (i = 0; i < 2; i++)
+	{
+		if (x >= 49 && x < 51 && y >= 20 && y <= 29)
+			screen[y][x] = startcursor[i];
 		x++;
 	}
 }
@@ -310,40 +359,32 @@ int StartGameAction2()
 	}
 }
 
-void PlayerInitialObject()
-{        //플레이어 비행기 좌표설정 (1대이므로 지정해준다.)
-	player.x = 39;
-	player.y = 19;
-
-	player.liveFlag = 1;        // 1로 설정해주어 죽으면 0으로 바뀌게끔 설정
+int selectimpoaction2()
+{
+	if (stagecount == 0)
+	{
+		if ((GetAsyncKeyState(VK_RETURN) & 0x8000))
+		{
+			if (startgame.y == 21)
+			{
+				return 1;
+			}
+			else if (startgame.y == 22)
+			{
+				return 2;
+			}
+		}
+	}
 }
+
+
 
 void SetStartPosition() {
 
 	Initial();                    // 커서 안보이게
-	PlayerInitialObject();        // 플레이어 비행기 시작 좌표 설정
+
 	EnemyInitialObject();
 
-}
-
-void PlayerAction() {            // 플레이어 비행기 이동 함수
-
-	if (player.liveFlag == 1)
-	{
-		if ((GetAsyncKeyState(VK_UP) & 0x8000))        //GetAsyncKeyState는 short값으로 입력이 되었으면 맨앞비트가 1 아니면 0을 리턴
-		{                                                //0x8000은 16진수로 short값의 맨앞만 1인상태이므로
-
-		}
-		if ((GetAsyncKeyState(VK_DOWN) & 0x8000))
-		{
-
-		}
-
-		if ((GetAsyncKeyState(VK_SPACE) & 0x8000))
-		{
-
-		}
-	}
 }
 
 void EnemyAction() 
@@ -704,6 +745,7 @@ void Draw()
 
 
 	DrawEnemy();        // 적비행기 출력
+	drawselectimpo();
 
 	Sleep(100);
 	for (i = 0; i < HEIGHT; i++)
@@ -713,6 +755,8 @@ void Draw()
 
 		MoveCursor(70, 23);
 		printf("Left Imposter : %d", IMPO_NUM);
+		MoveCursor(70, 24);
+		printf("selectimpo.y : %d", selectimpo.y);
 
 	}
 }
@@ -827,36 +871,28 @@ void CheckCrash()
 	}
 }
 
-int CheckEndGame()
-{
-
-	if (player.liveFlag == 0)
+/*int CheckEndGame()
 	{
-		MoveCursor(36, 12);
-		printf(" Game Over ");
-		Sleep(1000);
-		MoveCursor(0, 24);
-		return 1;
+
 	}
-}
+ */
 
-
-int CheckClearGame()
-{
+/*int CheckClearGame()
+	{
 	int i;
 	for (i = 0; i < ENEMY_NUM; i++)
 	{
-		if (enemy[i].liveFlag == 1)
-		{
-			return 0;
-		}
+	if (enemy[i].liveFlag == 1)
+	{
+	return 0;
+	}
 	}
 	MoveCursor(36, 12);
 	printf(" Stage Clear ");
 	MoveCursor(0, 24);
 	Sleep(1000);
 	return 1;
-}
+	}*/
 //------------------------------------------------------//
 
 
