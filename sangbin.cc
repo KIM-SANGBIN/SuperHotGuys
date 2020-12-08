@@ -34,7 +34,43 @@ char gamemap[HEIGHT][WIDTH] =
 	"|   |                             |   |                                   |   |\n",
 	"|   |=============================|   |===================================|   |\n",
 	"|                                                                             |\n",
-	"===============================================================================\n"
+	"===============================================================================\n",
+	"                     Who is the Imposter?               A                      \n",
+	" Dead :                                                 B                      \n",
+	"                                                        C                      \n",
+	"                                                        D                      \n",
+	"                                                        E                      \n",
+	"                                                        F                      \n",
+	"                                                        G                      \n",
+	"                                                        H                      \n",
+	"                                                        I                      \n",
+	"                                                        J                      \n"
+
+};
+char sabotagemap[HEIGHT][WIDTH] =
+{
+	"     @@@@@@*@=====@@@@@@@@                   .-!=;-                            \n",
+	"     @@@@@@===!!!====@@@@@                  *!     #,                          \n",
+	"     @@@@==;,.,,-,.:==@@@@                 *        ,$ -$*                     \n",
+	"     @@@=*,---,,,--,.*=@@@               ,!           @= ~!                    \n",
+	"     @@==,,-.  .  .,-,*=@@               !            =$  ~~                   \n",
+	"     @@=,-,    ,    .-,=@@               !            =$  ~~                   \n",
+	"     @=:--     ,     ,-~=@               @         ,   #@~ :.                  \n",
+	"     @=--     .,.     -,=@              -@       :~#@  ,@@- $                  \n",
+	"     =*--     ,,.     ,-;=              :@    .=@: .;~  -@$ ,:                 \n",
+	"     =;-,     ,,.,    .-:=              :@**@=*~.    ;   =@; #.                \n",
+	"     =;-.    .,,,,    .-~=              ~@@.-~~,,,   =.   @@  :                \n",
+	"     =;-,    ,.,,.    .-:=            . -@@~~~~~~,   =;   !@$ =     .          \n",
+	"     =*:-     .,,     ,~!=         .    ,@@;~~~~~~~~ $,    @@  :    .          \n",
+	"     @=~-      ,.     -:=@         .     @@;~~~~~~~;;-     !@= #               \n",
+	"     @=:~-     ,     ,-:=@         .     @@@*****=$;       -@@ @               \n",
+	"     @@=:-,    ,    .-;*$@         .     @@@@=!~            #@@*               \n",
+	"     @@$*;--.  .   ,-;*=@@         .     @@@@               ,@@:               \n",
+	"     @@@==;~--,..--~;*=@@@         .     @@@@                @@.  .            \n",
+	"     @@@@==!!;:~~;!!==@@@@               @@@@                ::                \n",
+	"     @@@@@@===!!!*==@@@@@@         .     *!!=                ;.                \n",
+	"     @@@@@@@@$====@@@@@@@@                                                     \n"
+
 };
 char MainScreen[HEIGHT][WIDTH] = {
 
@@ -87,6 +123,7 @@ void Draw();
 int CheckEndGame();
 int CheckClearGame();
 void EnemyInitialObject();
+void CheckCrash();
 //----------------------------------------//
 
 //----------------함수들--------------//
@@ -101,11 +138,11 @@ struct PlayerInfo
 struct EnemyInfo {
 	int x, y;
 	int liveFlag;
-	int StartX;           //    기준점좌표값 x - StartX 절대값을 구해서.
-	int StartY;
-	int movex;
-	int movey;
-	int ismoving;
+	/*int StartX;           //    기준점좌표값 x - StartX 절대값을 구해서.
+		int StartY;
+		int movex;
+		int movey;
+		int ismoving;*/
 	char name;
 	int isimpo;
 	int pathnum;            //경로지정
@@ -129,6 +166,7 @@ void main()
 	srand((unsigned)time(NULL));
 	Initial();
 	startgameinitialobject();
+	int count = 0;
 	while (stagecount == 0)
 	{
 		if (stagecount == 0)
@@ -148,16 +186,47 @@ void main()
 		if (stagecount == 1)
 		{
 			EnemyAction();
+			Draw();
 			//PlayerAction();
 
-			Draw();
 			/*if (CheckEndGame() == 1)
 				break;
 				if (CheckClearGame() == 1)
 				stagecount++;*/
+			/*if(count<30 || count>=51)
+				Draw();
+				if (count >= 30 && count <50)           //전등 꺼지는 시간
+				{
+				int i;
+				for (i = 0; i < HEIGHT; i++)            // HEIGHT = 24
+				{
+				memset(screen[i], ' ', WIDTH);        //화면의  i번째 행들을 ' ' 공백으로 width의 길이만큼 넣어주고
+				for (int j = 0; j < WIDTH; j++)
+				{
+				screen[i][j] = sabotagemap[i][j];
+				}
+
+				screen[i][WIDTH - 1] = NULL;            // 마지막 width칸에 NULL을 넣어준다.
+				}
+				for (i = 0; i < HEIGHT; i++)
+				{
+				MoveCursor(0, i);        //  커서의 시작 지점 즉 y축을 바꾸어주며 한줄단위로 출력
+				printf(screen[i]);        //    화면의 i번째행 을 출력   ==  printf("%s",screen[i]);
+
+				MoveCursor(70, 23);
+				printf("%d", 1000000);
+
+				}
+				}*/
+			if (count > 100)
+			{
+				CheckCrash();
+			}
 		}
-		Sleep(5);
+		Sleep(1);
+		count++;
 	}
+
 
 }
 
@@ -643,36 +712,14 @@ void Draw()
 		printf(screen[i]);        //    화면의 i번째행 을 출력   ==  printf("%s",screen[i]);
 
 		MoveCursor(70, 23);
-		printf("%d", 1000000);
+		printf("Left Imposter : %d", IMPO_NUM);
 
 	}
 }
 
 void DrawEnemy() 
 {       
-	/*
-		 int i, j;
-		 int x, y;
 
-		 for (i = 0; i < ENEMY_NUM; i++)
-		 {
-		 if (enemy[i].liveFlag == 1)
-		 {
-		 x = enemy[i].x - E_COUNT / 2;
-		 y = enemy[i].y;
-
-		 if (y < 0 || y >= HEIGHT)
-		 continue;
-
-		 for (j = 0; j < E_COUNT; j++)
-		 {
-		 if (x >= 0 && x < WIDTH - 1)
-	//screen[y][x] = eUnit[j];
-	screen[y][x] = enemy[i].name;
-	x++;
-	}
-	}
-	}*/
 	int i, j;
 	int x=0, y=0;
 	for (i = 0; i < ENEMY_NUM; i++)
@@ -682,6 +729,11 @@ void DrawEnemy()
 			x = enemy[i].x;
 			y = enemy[i].y;
 		}
+		else if (enemy[i].liveFlag == 0)
+		{
+			x = 8;
+			y = 21;
+		}
 		while (screen[y][x] != ' ' && screen[y][x] != '=' && screen[y][x] != '|' )
 			x = x + 1;
 		screen[y][x] = enemy[i].name;
@@ -690,36 +742,14 @@ void DrawEnemy()
 }
 
 void EnemyInitialObject() 
-{        // 적 비행기 좌표설정    ( i 는 적비행기 객체, j 행 , k 열 ) 
-	/*
-		 int i = 0;
-		 for (int j = 0; j < ENEMY_LINE; j++)
-		 {
-		 for (int k = 0; k < ENEMY_FLIGHT; k++)
-		 {
-		 enemy[i].x = 17 + 5 * k;
-		 enemy[i].y = 3 + 2 * j;
-		 enemy[i].liveFlag = 1;
-		 enemy[i].StartX = enemy[i].x;    //enemy[i]의 x좌표와 처음 동일시
-		 enemy[i].StartY = enemy[i].y;
-		 enemy[i].MoveFlag = 1;
-
-		 i++;
-		 }
-		 }
-	 */
+{       
 	int i = 0;
 	for (i = 0; i < ENEMY_NUM; i++)
 	{
-		enemy[i].x = 1;
+		enemy[i].x = 35;
 		enemy[i].y = 1;
-		enemy[i].liveFlag = 1;
-		enemy[i].StartX = enemy[i].x;
-		enemy[i].StartY = enemy[i].y;
-		enemy[i].isimpo = 0;
-		enemy[i].ismoving = 0;
-		enemy[i].movex = 0;
-		enemy[i].movey = 0;
+		enemy[i].liveFlag = 1;       
+		enemy[i].isimpo = 0;        
 		enemy[i].pathnum = 0;
 		enemy[i].walknum = 0;
 		if (i == 0)
@@ -776,6 +806,24 @@ void EnemyInitialObject()
 		else
 			continue;
 
+	}
+}
+
+void CheckCrash()
+{
+	int i,j;
+	for (i = 0; i < ENEMY_NUM; i++)
+	{
+		if (enemy[i].isimpo == 1)
+		{
+			for (j = 0; j < ENEMY_NUM; j++)
+			{
+				if (abs(enemy[i].x - enemy[j].x) <= 1 && abs(enemy[i].y - enemy[j].y) <= 1 && enemy[j].isimpo == 0)
+				{
+					enemy[j].liveFlag = 0;
+				}
+			}
+		}
 	}
 }
 
