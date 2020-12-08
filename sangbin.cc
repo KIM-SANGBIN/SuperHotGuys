@@ -156,7 +156,7 @@ void main()
 				if (CheckClearGame() == 1)
 				stagecount++;*/
 		}
-		Sleep(50);
+		Sleep(5);
 	}
 
 }
