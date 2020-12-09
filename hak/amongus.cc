@@ -288,8 +288,8 @@ int main()
 				}
 				CheckCrash();
 			}
-			//if (CheckEndGame() == 1)
-			//	break;
+			if (CheckEndGame() == 1)
+				break;
 			if (CheckClearGame() == 1)
 				break;
 			Sleep(1);
