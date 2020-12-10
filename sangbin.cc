@@ -12,6 +12,7 @@
 #include <chrono>
 
 using namespace std;
+using namespace chrono;
 
 char screen[HEIGHT][WIDTH];        //    [행][열]
 char gamemap[HEIGHT][WIDTH] =
@@ -156,6 +157,7 @@ void Select_ImpoAction();
 void Select_ImpoAction2();
 void Draw_SelectImpo();
 void ShowFind();
+int Check_FiveSeconds();
 //----------------------------------------//
 
 //----------------함수들--------------//
@@ -178,14 +180,14 @@ struct Enemy_Info {
     int pathnum;            //경로지정
     int walknum;            //경로 내에서 걸어간 횟수
     int finish = 0;
+    int kill = 1;
+    system_clock::time_point StartTime;
 };
 
 typedef struct Dead_Body {
     int x, y, already = 0;
     char name;
 }DeadBody;
-
-
 
 struct Start_Info
 {
@@ -312,6 +314,16 @@ int main()
     }
     return 0;
 }
+
+
+int Check_FiveSeconds(struct Enemy_Info a) {
+    system_clock::time_point end = system_clock::now();
+    seconds sec = duration_cast<seconds>(end - a.StartTime);
+    if (sec.count() >= 5)
+        return 1;
+    else return 0;
+}
+
 
 void StartGame_Action()
 {
@@ -1220,9 +1232,11 @@ void CheckCrash()
     {
         if (enemy[i].isimpo == 1)
         {
+            if(Check_FiveSeconds(enemy[i]))
+                enemy[i].kill = 1;
             for (j = 0; j < Enemy_NUM; j++)
             {
-                if (abs(enemy[i].x - enemy[j].x) <= 1 && abs(enemy[i].y - enemy[j].y) <= 1 && enemy[j].isimpo == 0)
+                if (enemy[i].kill == 1 && abs(enemy[i].x - enemy[j].x) <= 1 && abs(enemy[i].y - enemy[j].y) <= 1 && enemy[j].isimpo == 0)
                 {
                     DeadBody a;
                     a.x = enemy[j].x;
@@ -1231,6 +1245,10 @@ void CheckCrash()
                     enemy[j].finish = 1;
                     enemy[j].liveFlag = 0;
                     dead_info[j] = a;
+                    system_clock::time_point killtime;
+                    killtime = system_clock::now();
+                    enemy[i].StartTime = killtime;
+                    enemy[i].kill = 0;
                     Sleep(100);
                     break;
                 }
