@@ -122,10 +122,10 @@ char findmap[HEIGHT][WIDTH] =
    "                   @   .-   @     @                                           \n",
    "                   !===@@   @=====*                                           \n"
 };
-#define enemy_NUM 10
+#define Enemy_NUM 10
 #define E_COUNT 3
-#define enemy_LINE 3
-#define enemy_FLIGHT 10
+#define Enemy_LINE 3
+#define Enemy_FLIGHT 10
 #define IMPO_NUM 2
 
 int stagecount = 0;
@@ -146,10 +146,10 @@ void DrawStartGame();
 void SetStartPosition();
 void Check_ImpoNum();
 void Check_PersonNum();
-void enemyAction();
+void EnemyAction();
 void Drawenemy();
 void Draw();
-void enemyInitialObject();
+void EnemyInitialObject();
 void CheckCrash();
 void Select_ImpoObject();
 void Select_ImpoAction();
@@ -170,7 +170,7 @@ struct Person_Info
 {
     int num;
 };
-struct enemy_Info {
+struct Enemy_Info {
     int x, y;
     int liveFlag;
     char name;
@@ -199,9 +199,9 @@ struct Select_Info
 struct Person_Info person;
 struct Start_Info startgame;
 struct Impo_Info imposter;
-struct enemy_Info enemy[enemy_NUM];
+struct Enemy_Info enemy[Enemy_NUM];
 struct Select_Info selectimpo;
-DeadBody dead_info[enemy_NUM];
+DeadBody dead_info[Enemy_NUM];
 //--------------------struct-----------------------//
 
 int main()
@@ -236,7 +236,7 @@ int main()
         {
             Initial();
 
-            enemyAction();
+            EnemyAction();
 
             if (find_dead == 0 && (count >= 40) && (count % 40 >= 0) && (count % 100 <= 20))
                 lightoff = 1;
@@ -674,7 +674,7 @@ void Select_ImpoAction2()
             }
 
             stagecount = 1;
-            for (int z = 0; z < enemy_NUM; z++)
+            for (int z = 0; z < Enemy_NUM; z++)
             {
                 if (enemy[z].liveFlag == 1)
                 {
@@ -696,14 +696,14 @@ void SetStartPosition() {
 
     Initial();                    // 커서 안보이게
     imposter.num = IMPO_NUM;
-    person.num = enemy_NUM;
-    enemyInitialObject();
+    person.num = Enemy_NUM;
+    EnemyInitialObject();
 }
 
-void enemyAction()
+void EnemyAction()
 {
     int i;
-    for (i = 0; i < enemy_NUM; i++)
+    for (i = 0; i < Enemy_NUM; i++)
     {
         if (enemy[i].liveFlag && enemy[i].finish == 0)
         {
@@ -1080,7 +1080,7 @@ void Drawenemy()
 
     int i;
     int x = 0, y = 0;
-    for (i = 0; i < enemy_NUM; i++)
+    for (i = 0; i < Enemy_NUM; i++)
     {
         if (enemy[i].liveFlag == 1)
         {
@@ -1100,10 +1100,10 @@ void Drawenemy()
 }
 
 
-void enemyInitialObject()
+void EnemyInitialObject()
 {
     int i = 0;
-    for (i = 0; i < enemy_NUM; i++)
+    for (i = 0; i < Enemy_NUM; i++)
     {
         if (enemy[i].finish != 1)
         {
@@ -1162,7 +1162,7 @@ void enemyInitialObject()
         int imponum = 0;
         while (imponum != IMPO_NUM)
         {
-            int random = rand() % enemy_NUM;
+            int random = rand() % Enemy_NUM;
             if (enemy[random].isimpo == 0)
             {
                 enemy[random].isimpo = 1;
@@ -1177,7 +1177,7 @@ void enemyInitialObject()
 void Check_ImpoNum()
 {
     int count = 0;
-    for (int i = 0; i < enemy_NUM; i++)
+    for (int i = 0; i < Enemy_NUM; i++)
     {
         if (enemy[i].isimpo && enemy[i].liveFlag)
         {
@@ -1190,7 +1190,7 @@ void Check_ImpoNum()
 void Check_PersonNum()
 {
     int count = 0;
-    for (int i = 0; i < enemy_NUM; i++)
+    for (int i = 0; i < Enemy_NUM; i++)
     {
         if (enemy[i].isimpo == 0 && enemy[i].liveFlag)
         {
@@ -1203,7 +1203,7 @@ void Check_PersonNum()
 int Check_DeadPerson()
 {
     int count = 0;
-    for (int i = 0; i < enemy_NUM; i++)
+    for (int i = 0; i < Enemy_NUM; i++)
     {
         if (enemy[i].isimpo == 0 && enemy[i].liveFlag == 0)
         {
@@ -1216,11 +1216,11 @@ int Check_DeadPerson()
 void CheckCrash()
 {
     int i, j;
-    for (i = 0; i < enemy_NUM; i++)
+    for (i = 0; i < Enemy_NUM; i++)
     {
         if (enemy[i].isimpo == 1)
         {
-            for (j = 0; j < enemy_NUM; j++)
+            for (j = 0; j < Enemy_NUM; j++)
             {
                 if (abs(enemy[i].x - enemy[j].x) <= 1 && abs(enemy[i].y - enemy[j].y) <= 1 && enemy[j].isimpo == 0)
                 {
@@ -1242,15 +1242,15 @@ void CheckCrash()
 int Find_DeadBody()
 {
     int i, x, y, j;
-    for (i = 0; i < enemy_NUM; i++)
+    for (i = 0; i < Enemy_NUM; i++)
     {
         if (enemy[i].isimpo == 0 && enemy[i].liveFlag == 1)
         {
-            for (j = 0; j < enemy_NUM; j++)
+            for (j = 0; j < Enemy_NUM; j++)
             {
                 if (dead_info[j].already == 0 && enemy[i].x == dead_info[j].x && enemy[i].y == dead_info[j].y && find_dead == 0)
                 {
-                    for (int p = 0; p < enemy_NUM; p++)
+                    for (int p = 0; p < Enemy_NUM; p++)
                     {
                         if (enemy[p].liveFlag == 0) dead_info[p].already = 1;
                     }
