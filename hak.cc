@@ -107,8 +107,8 @@ char findmap[HEIGHT][WIDTH] =
 	"						@@@-   ,. # ,@#@-    @								 \n",
 	"						:  ,@#@#$#@@-   @    =								 \n",
 	"						-               $    *								\n",
-	"						-               =    !		DEAD REPORT!!!          \n",
-	"						-               $    !		Someone died 			\n",
+	"						-               =    !								\n",
+	"						-               $    !								\n",
 	"						~               $    !								\n",
 	"						;               $    !								\n",
 	"						*               $    !								\n",
@@ -211,8 +211,7 @@ deadbody dead_info[ENEMY_NUM];
 
 int main()
 {
-	int i, dead_index;
-	int report_x, report_y;
+	int x, y, i, dead_index;
 	srand((unsigned)time(NULL));
 	Initial();
 	startgameinitialobject();
@@ -220,7 +219,6 @@ int main()
 	{
 		int count = 0;
 		int lightoff = 0;
-		ClearScreen();
 		while (stagecount == 0)
 		{
 
@@ -233,16 +231,14 @@ int main()
 					break;
 			
 			Sleep(100);
-
-			SetStartPosition();
-			selectimpoobject();
 		}
-
+		SetStartPosition();
+		selectimpoobject();
 		
 		while (stagecount == 1)
 		{
-			
-			Initial();
+			lightoff = 0;
+
 			EnemyAction();
 			selectimpoaction();
 			selectimpoaction2();
@@ -258,6 +254,17 @@ int main()
 			if (!lightoff)
 			{
 				Draw();
+				Find_deadbody();
+				if(find_dead)
+				{
+					dead_index = Find_deadbody();
+					stagecount = 2;
+					ShowFind();
+					Sleep(2000);
+					find_dead = 0;
+					break;
+				}
+
 			}
 			if (lightoff)           //전등 꺼지는 시간
 			{
@@ -280,21 +287,6 @@ int main()
 					MoveCursor(70, 23);
 				}
 				CheckCrash();
-				Sleep(50);
-
-				dead_index = Find_deadbody();
-				if (find_dead)
-				{
-					stagecount = 2;
-					ClearScreen();
-					ShowFind();
-					Sleep(4000);
-					find_dead = 0;
-					lightoff = 0;
-					break;
-				}
-
-
 			}
 			//if (CheckEndGame() == 1)
 			//	break;
@@ -307,10 +299,8 @@ int main()
 		while (stagecount == 2)
 		{
 			//ShowFind();
-			MoveCursor(5, 35);
+			MoveCursor(0, 35);
 			cout << "DEAD BODY " << dead_info[dead_index].name << " Founded" << endl;
-			MoveCursor(5, 37);
-			cout << dead_info[dead_index].name << "가 죽어버렸당께!";
 			int i;
 	/*		for (i = 0; i < HEIGHT; i++)            // HEIGHT = 24
 			{
@@ -329,20 +319,18 @@ int main()
 
 				//MoveCursor(70, 23);
 			}*/
-			report_x = dead_info[dead_index].y; report_y = dead_info[dead_index].x;
-			MoveCursor(report_y, report_x);
-			cout << "♧" << dead_info[dead_index].name  <<"♧ <=여기 조용히 묻히다..";
-			
-		
-	
+			x = dead_info[dead_index].x; y = dead_info[dead_index].y;
+			/*while (screen[y][x] != ' ' && screen[y][x] != '=' && screen[y][x] != '|')
+				x = x + 1;
+			screen[y][x] = dead_info[dead_index].name;*/
 			//MoveCursor(30, 25);
 			Draw();
 			drawselectimpo();
 			selectimpoaction();
 			selectimpoaction2();
 
-			//dead_info[dead_index].x = -20;
-			//dead_info[dead_index].y = -20;
+			dead_info[dead_index].x = -20;
+			dead_info[dead_index].y = -20;
 			find_dead = 0;
 		}
 
@@ -350,8 +338,6 @@ int main()
 			break;
 		if (CheckClearGame() == 1)
 			break;
-
-		Sleep(50);
 
 	}
 	return 0;
@@ -1107,10 +1093,10 @@ void Draw()
 		MoveCursor(0, i);        //  커서의 시작 지점 즉 y축을 바꾸어주며 한줄단위로 출력
 		printf(screen[i]);        //    화면의 i번째행 을 출력   ==  printf("%s",screen[i]);
 
-		MoveCursor(60, 23);
+		MoveCursor(70, 23);
 		checkimponum();
 		printf("Left Imposter : %d", imposter.num);
-		MoveCursor(60, 24);
+		MoveCursor(70, 24);
 		checkpersonnum();
 		printf("Left Person : %d", person.num);
 
@@ -1140,9 +1126,6 @@ void DrawEnemy()
 
 	}
 }
-
-
-
 
 void EnemyInitialObject()
 {
@@ -1275,8 +1258,6 @@ void CheckCrash()
 					enemy[j].finish = 1;
 					enemy[j].liveFlag = 0;
 					dead_info[j] = a;
-					Sleep(100);
-					break;
 				}
 			}
 		}
@@ -1291,12 +1272,13 @@ int Find_deadbody()
 		{
 			for (j = 0; j < ENEMY_NUM; j++)
 			{
-				if (dead_info[j].already == 0 && enemy[i].x == dead_info[j].x && enemy[i].y == dead_info[j].y && find_dead == 0)
+				if (dead_info[j].already == 0 && enemy[i].x == dead_info[j].x && enemy[i].y == dead_info[j].y)
 				{
 					for (int p = 0; p < ENEMY_NUM; p++)
 					{
 						if(enemy[p].liveFlag == 0) dead_info[p].already = 1;
 					}
+
 					find_dead = 1;
 					return j;
 				}
@@ -1304,7 +1286,6 @@ int Find_deadbody()
 		}
 
 	}
-	return 0;
 }
 
 
@@ -1315,12 +1296,10 @@ int CheckEndGame()
 {
 	checkpersonnum();
 	checkimponum();
-	if (person.num == imposter.num)
+	if (person.num == imposter.num * 2)
 	{
 		MoveCursor(36, 12);
 		printf("******************** Fail!! **************************");
-		MoveCursor(36, 13);
-		printf("그리고 아무도 없었다");
 		MoveCursor(0, 24);
 		Sleep(10000);
 

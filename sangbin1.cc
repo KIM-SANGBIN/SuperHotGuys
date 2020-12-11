@@ -39,7 +39,7 @@ char gamemap[HEIGHT][WIDTH] =
 	" Dead :                                                 B                      \n",
 	"                                                        C                      \n",
 	"                                                        D                      \n",
-	"                                                        E                      \n",
+	"							E                      \n",
 	"                                                        F                      \n",
 	"                                                        G                      \n",
 	"                                                        H                      \n",
@@ -97,29 +97,29 @@ char MainScreen[HEIGHT][WIDTH] = {
 
 };
 char findmap[HEIGHT][WIDTH] =
-{
-	"							.; =$;.$										 \n",
-	"							 =   @  @										 \n",
-	"							  $   .@										 \n",
-	"							   *  =											 \n",
-	"							   -  *      .;;;								 \n",
-	"							   -. *     @.   #								 \n",
-	"						@@@-   ,. # ,@#@-    @								 \n",
-	"						:  ,@#@#$#@@-   @    =								 \n",
-	"						-               $    *								\n",
-	"						-               =    !		DEAD REPORT!!!          \n",
-	"						-               $    !		Someone died 			\n",
-	"						~               $    !								\n",
-	"						;               $    !								\n",
-	"						*               $    !								\n",
-	"						#               #    @								\n",
-	"						@               #   =!								\n",
-	"						@   @@@@@@@     #*:,								\n",
-	"						$     =   @     @									\n",
-	"						~     =   @     @									\n",
-	"						 :    =   @     @									\n",
-	"						 @   .-   @     @									\n",
-	"						 !,  @    @     *									\n",
+{                                             
+	"							 .; =$;.$					Dead     Body    Reported\n",
+	"							 =   @  @											 \n",
+	"							  $   .@										     \n",
+	"							   *  =												 \n",
+	"							   -  *      .;;;									 \n", 
+	"							   -. *     @.   #									 \n",
+	"						@@@-   ,. # ,@#@-    @									 \n",	
+	"						:  ,@#@#$#@@-   @    =					who is imposter? \n",
+	"						-               $    *							A		\n",
+	"						-               =    !							B		\n",
+	"						-               $    !							C		\n",
+	"						~               $    !							D		\n",
+	"						;               $    !							E		\n",
+	"						*               $    !							F		\n",
+	"						#               #    @							G		\n",
+	"						@               #   =!							H		\n",
+	"						@   @@@@@@@     #*:,							I		\n",
+	"						$     =   @     @								J		\n",
+	"						~     =   @     @										\n",
+	"						 :    =   @     @										\n",
+	"						 @   .-   @     @										\n",
+	"						 !,  @    @     *										\n",
 };
 #define ENEMY_NUM 10
 #define E_COUNT 3
@@ -130,7 +130,7 @@ char findmap[HEIGHT][WIDTH] =
 int stagecount = 0;
 char startcursor[3] = ">>";
 char eUnit[E_COUNT + 1] = "=.=";
-int find_dead = 0;
+
 
 //---------------함수들-------------//
 int StartGameAction2();
@@ -154,7 +154,7 @@ void selectimpoobject();
 void selectimpoaction();
 void selectimpoaction2();
 void drawselectimpo();
-int Find_deadbody();
+void Find_deadbody();
 void ShowFind();
 //----------------------------------------//
 
@@ -182,15 +182,14 @@ struct EnemyInfo {
 	int isimpo;
 	int pathnum;            //경로지정
 	int walknum;            //경로 내에서 걸어간 횟수
-	int finish = 0;
 };
 
 typedef struct dead_body {
-	int x, y, already=0;
+	int x, y;
 	char name;
 }deadbody;
 
-
+vector<deadbody> dead_info;
 
 struct startinfo
 {
@@ -206,153 +205,79 @@ struct startinfo startgame;
 struct impoinfo imposter;
 struct EnemyInfo enemy[ENEMY_NUM];
 struct selectinfo selectimpo;
-deadbody dead_info[ENEMY_NUM];
+
 //--------------------struct-----------------------//
 
 int main()
 {
-	int i, dead_index;
-	int report_x, report_y;
 	srand((unsigned)time(NULL));
 	Initial();
 	startgameinitialobject();
-	while (1)
+	int count = 0;
+	int lightoff = 0;
+
+	while (stagecount == 0)
 	{
-		int count = 0;
-		int lightoff = 0;
-		ClearScreen();
-		while (stagecount == 0)
+		if (stagecount == 0)
 		{
-
-
-				startgameaction();
-				DrawMain();
-				if (StartGameAction2() == 1)
-					stagecount++;
-				else if (StartGameAction2() == 2)
-					break;
-			
-			Sleep(100);
-
-			SetStartPosition();
-			selectimpoobject();
+			startgameaction();
+			DrawMain();
+			if (StartGameAction2() == 1)
+				stagecount++;
+			else if (StartGameAction2() == 2)
+				break;
 		}
-
-		
-		while (stagecount == 1)
+		Sleep(100);
+	}
+	SetStartPosition();
+	selectimpoobject();
+	while (stagecount == 1)
+	{
+		lightoff = 0;
+		if (stagecount == 1)
 		{
-			
-			Initial();
 			EnemyAction();
 			selectimpoaction();
 			selectimpoaction2();
-
-			if (find_dead == 0 && (count >= 40) && (count % 40 >= 0) && (count % 100 <= 20))
-				lightoff = 1;
-
-				
+			if(checkdeadperson() != 0)
+				Find_deadbody();
 			/*if (CheckEndGame() == 1)
 				break;
 				if (CheckClearGame() == 1)
 				stagecount++;*/
-			if (!lightoff)
-			{
-				Draw();
-			}
-			if (lightoff)           //전등 꺼지는 시간
-			{
-				int i;
-				for (i = 0; i < HEIGHT; i++)            // HEIGHT = 24
+				if (!lightoff)
+					Draw();
+				if ((count >=40) && (count % 40 >= 0) && (count % 100 <= 20))
+					lightoff = 1;
+				if (lightoff)           //전등 꺼지는 시간
 				{
+					int i;
+					for (i = 0; i < HEIGHT; i++)            // HEIGHT = 24
+					{
 					memset(screen[i], ' ', WIDTH);        //화면의  i번째 행들을 ' ' 공백으로 width의 길이만큼 넣어주고
 					for (int j = 0; j < WIDTH; j++)
 					{
-						screen[i][j] = sabotagemap[i][j];
+					screen[i][j] = sabotagemap[i][j];
 					}
 
 					screen[i][WIDTH - 1] = NULL;            // 마지막 width칸에 NULL을 넣어준다.
-				}
-				for (i = 0; i < HEIGHT; i++)
-				{
+					}
+					for (i = 0; i < HEIGHT; i++)
+					{
 					MoveCursor(0, i);        //  커서의 시작 지점 즉 y축을 바꾸어주며 한줄단위로 출력
 					printf(screen[i]);        //    화면의 i번째행 을 출력   ==  printf("%s",screen[i]);
 
 					MoveCursor(70, 23);
+					}
+					CheckCrash();
 				}
-				CheckCrash();
-				Sleep(50);
-
-				dead_index = Find_deadbody();
-				if (find_dead)
-				{
-					stagecount = 2;
-					ClearScreen();
-					ShowFind();
-					Sleep(4000);
-					find_dead = 0;
-					lightoff = 0;
-					break;
-				}
-
-
-			}
-			//if (CheckEndGame() == 1)
-			//	break;
-			if (CheckClearGame() == 1)
-				break;
-			Sleep(1);
-			count++;
 		}
-
-		while (stagecount == 2)
-		{
-			//ShowFind();
-			MoveCursor(5, 35);
-			cout << "DEAD BODY " << dead_info[dead_index].name << " Founded" << endl;
-			MoveCursor(5, 37);
-			cout << dead_info[dead_index].name << "가 죽어버렸당께!";
-			int i;
-	/*		for (i = 0; i < HEIGHT; i++)            // HEIGHT = 24
-			{
-				memset(screen[i], ' ', WIDTH);        //화면의  i번째 행들을 ' ' 공백으로 width의 길이만큼 넣어주고
-				for (int j = 0; j < WIDTH; j++)
-				{
-					screen[i][j] = gamemap[i][j];
-				}
-
-				screen[i][WIDTH - 1] = NULL;            // 마지막 width칸에 NULL을 넣어준다.
-			}
-			for (i = 0; i < HEIGHT; i++)
-			{
-				MoveCursor(0, i);        //  커서의 시작 지점 즉 y축을 바꾸어주며 한줄단위로 출력
-				printf(screen[i]);        //    화면의 i번째행 을 출력   ==  printf("%s",screen[i]);
-
-				//MoveCursor(70, 23);
-			}*/
-			report_x = dead_info[dead_index].y; report_y = dead_info[dead_index].x;
-			MoveCursor(report_y, report_x);
-			cout << "♧" << dead_info[dead_index].name  <<"♧ <=여기 조용히 묻히다..";
-			
-		
-	
-			//MoveCursor(30, 25);
-			Draw();
-			drawselectimpo();
-			selectimpoaction();
-			selectimpoaction2();
-
-			//dead_info[dead_index].x = -20;
-			//dead_info[dead_index].y = -20;
-			find_dead = 0;
-		}
-
 		if (CheckEndGame() == 1)
 			break;
 		if (CheckClearGame() == 1)
 			break;
-
-		Sleep(50);
-
+		Sleep(1);
+		count++;
 	}
 	return 0;
 
@@ -460,9 +385,10 @@ void ShowFind()
 	{
 		MoveCursor(0, i);        //  커서의 시작 지점 즉 y축을 바꾸어주며 한줄단위로 출력
 		printf(screen[i]);        //    화면의 i번째행 을 출력   ==  printf("%s",screen[i]);
-		//MoveCursor(70, 23);
+
+		MoveCursor(70, 23);
 	}
-	//Sleep(500);
+	Sleep(500);
 }
 
 
@@ -506,7 +432,7 @@ int StartGameAction2()
 
 void selectimpoaction2()
 {
-	if (stagecount == 2)
+	if (stagecount == 1)
 	{
 		if ((GetAsyncKeyState(VK_RETURN) & 0x8000))
 		{
@@ -515,7 +441,6 @@ void selectimpoaction2()
 				if (enemy[0].isimpo == 1)
 				{
 					enemy[0].liveFlag = 0;
-					enemy[0].finish = 1;
 					MoveCursor(30, 25);
 					printf("%c is Imposter!", enemy[0].name);
 
@@ -524,7 +449,6 @@ void selectimpoaction2()
 				else
 				{
 					enemy[0].liveFlag = 0;
-					enemy[0].finish = 1;
 					MoveCursor(30, 25);
 					printf("%c is not Imposter!", enemy[0].name);
 
@@ -536,7 +460,6 @@ void selectimpoaction2()
 				if (enemy[1].isimpo == 1)
 				{
 					enemy[1].liveFlag = 0;
-					enemy[1].finish = 1;
 					MoveCursor(30, 25);
 					printf("%c is Imposter!", enemy[1].name);
 
@@ -545,7 +468,6 @@ void selectimpoaction2()
 				else
 				{
 					enemy[1].liveFlag = 0;
-					enemy[1].finish = 1;
 					MoveCursor(30, 25);
 					printf("%c is not Imposter!", enemy[1].name);
 
@@ -556,7 +478,6 @@ void selectimpoaction2()
 			{
 				if (enemy[2].isimpo == 1)
 				{
-					enemy[2].finish = 1;
 					enemy[2].liveFlag = 0;
 					MoveCursor(30, 25);
 					printf("%c is Imposter!", enemy[2].name);
@@ -565,7 +486,6 @@ void selectimpoaction2()
 				}
 				else
 				{
-					enemy[2].finish = 1;
 					enemy[2].liveFlag = 0;
 					MoveCursor(30, 25);
 					printf("%c is not Imposter!", enemy[2].name);
@@ -577,7 +497,6 @@ void selectimpoaction2()
 			{
 				if (enemy[3].isimpo == 1)
 				{
-					enemy[3].finish = 1;
 					enemy[3].liveFlag = 0;
 					MoveCursor(30, 25);
 					printf("%c is Imposter!", enemy[3].name);
@@ -587,7 +506,6 @@ void selectimpoaction2()
 				}
 				else
 				{
-					enemy[3].finish = 1;
 					enemy[3].liveFlag = 0;
 					MoveCursor(30, 25);
 					printf("%c is not Imposter!", enemy[3].name);
@@ -599,7 +517,6 @@ void selectimpoaction2()
 			{
 				if (enemy[4].isimpo == 1)
 				{
-					enemy[4].finish = 1;
 					enemy[4].liveFlag = 0;
 					MoveCursor(30, 25);
 					printf("%c is Imposter!", enemy[4].name);
@@ -608,7 +525,6 @@ void selectimpoaction2()
 				}
 				else
 				{
-					enemy[4].finish = 1;
 					enemy[4].liveFlag = 0;
 					MoveCursor(30, 25);
 					printf("%c is not Imposter!", enemy[4].name);
@@ -620,7 +536,6 @@ void selectimpoaction2()
 			{
 				if (enemy[5].isimpo == 1)
 				{
-					enemy[5].finish = 1;
 					enemy[5].liveFlag = 0;
 					MoveCursor(30, 25);
 					printf("%c is Imposter!", enemy[5].name);
@@ -629,7 +544,6 @@ void selectimpoaction2()
 				}
 				else
 				{
-					enemy[5].finish = 1;
 					enemy[5].liveFlag = 0;
 					MoveCursor(30, 25);
 					printf("%c is not Imposter!", enemy[5].name);
@@ -641,7 +555,6 @@ void selectimpoaction2()
 			{
 				if (enemy[6].isimpo == 1)
 				{
-					enemy[6].finish = 1;
 					enemy[6].liveFlag = 0;
 					MoveCursor(30, 25);
 					printf("%c is Imposter!", enemy[6].name);
@@ -650,7 +563,6 @@ void selectimpoaction2()
 				}
 				else
 				{
-					enemy[6].finish = 1;
 					enemy[6].liveFlag = 0;
 					MoveCursor(30, 25);
 					printf("%c is not Imposter!", enemy[6].name);
@@ -662,7 +574,6 @@ void selectimpoaction2()
 			{
 				if (enemy[7].isimpo == 1)
 				{
-					enemy[7].finish = 1;
 					enemy[7].liveFlag = 0;
 					MoveCursor(30, 25);
 					printf("%c is Imposter!", enemy[7].name);
@@ -671,7 +582,6 @@ void selectimpoaction2()
 				}
 				else
 				{
-					enemy[7].finish = 1;
 					enemy[7].liveFlag = 0;
 					MoveCursor(30, 25);
 					printf("%c is not Imposter!", enemy[7].name);
@@ -683,7 +593,6 @@ void selectimpoaction2()
 			{
 				if (enemy[8].isimpo == 1)
 				{
-					enemy[8].finish = 1;
 					enemy[8].liveFlag = 0;
 					MoveCursor(30, 25);
 					printf("%c is Imposter!", enemy[8].name);
@@ -692,7 +601,6 @@ void selectimpoaction2()
 				}
 				else
 				{
-					enemy[8].finish = 1;
 					enemy[8].liveFlag = 0;
 					MoveCursor(30, 25);
 					printf("%c is not Imposter!", enemy[8].name);
@@ -704,7 +612,6 @@ void selectimpoaction2()
 			{
 				if (enemy[9].isimpo == 1)
 				{
-					enemy[9].finish = 1;
 					enemy[9].liveFlag = 0;
 					MoveCursor(30, 25);
 					printf("%c is Imposter!", enemy[9].name);
@@ -713,7 +620,6 @@ void selectimpoaction2()
 				}
 				else
 				{
-					enemy[9].finish = 1;
 					enemy[9].liveFlag = 0;
 					MoveCursor(30, 25);
 					printf("%c is not Imposter!", enemy[9].name);
@@ -721,13 +627,8 @@ void selectimpoaction2()
 					Sleep(1000);
 				}
 			}
-
-			stagecount = 1;
 		}
-		
 	}
-
-
 }
 
 
@@ -746,7 +647,7 @@ void EnemyAction()
 	int i;
 	for (i = 0; i < ENEMY_NUM; i++)
 	{
-		if (enemy[i].liveFlag && enemy[i].finish == 0)
+		if (enemy[i].liveFlag)
 		{
 			if (enemy[i].pathnum == 0)
 			{
@@ -1107,10 +1008,10 @@ void Draw()
 		MoveCursor(0, i);        //  커서의 시작 지점 즉 y축을 바꾸어주며 한줄단위로 출력
 		printf(screen[i]);        //    화면의 i번째행 을 출력   ==  printf("%s",screen[i]);
 
-		MoveCursor(60, 23);
+		MoveCursor(70, 23);
 		checkimponum();
 		printf("Left Imposter : %d", imposter.num);
-		MoveCursor(60, 24);
+		MoveCursor(70, 24);
 		checkpersonnum();
 		printf("Left Person : %d", person.num);
 
@@ -1141,70 +1042,61 @@ void DrawEnemy()
 	}
 }
 
-
-
-
 void EnemyInitialObject()
 {
 	int i = 0;
 	for (i = 0; i < ENEMY_NUM; i++)
 	{
-		if (enemy[i].finish != 1)
+		enemy[i].x = 35;
+		enemy[i].y = 1;
+		enemy[i].liveFlag = 1;
+		enemy[i].isimpo = 0;
+		enemy[i].pathnum = 0;
+		enemy[i].walknum = 0;
+		if (i == 0)
 		{
-
-
-
-			enemy[i].x = 35;
-			enemy[i].y = 1;
-			enemy[i].liveFlag = 1;
-			enemy[i].isimpo = 0;
-			enemy[i].pathnum = 0;
-			enemy[i].walknum = 0;
-			if (i == 0)
-			{
-				enemy[i].name = 'A';
-			}
-			if (i == 1)
-			{
-				enemy[i].name = 'B';
-			}
-			if (i == 2)
-			{
-				enemy[i].name = 'C';
-			}
-			if (i == 3)
-			{
-				enemy[i].name = 'D';
-			}
-			if (i == 4)
-			{
-				enemy[i].name = 'E';
-			}
-			if (i == 5)
-			{
-				enemy[i].name = 'F';
-			}
-			if (i == 6)
-			{
-				enemy[i].name = 'G';
-			}
-			if (i == 7)
-			{
-				enemy[i].name = 'H';
-			}
-			if (i == 8)
-			{
-				enemy[i].name = 'I';
-			}
-			if (i == 9)
-			{
-				enemy[i].name = 'J';
-			}
+			enemy[i].name = 'A';
+		}
+		if (i == 1)
+		{
+			enemy[i].name = 'B';
+		}
+		if (i == 2)
+		{
+			enemy[i].name = 'C';
+		}
+		if (i == 3)
+		{
+			enemy[i].name = 'D';
+		}
+		if (i == 4)
+		{
+			enemy[i].name = 'E';
+		}
+		if (i == 5)
+		{
+			enemy[i].name = 'F';
+		}
+		if (i == 6)
+		{
+			enemy[i].name = 'G';
+		}
+		if (i == 7)
+		{
+			enemy[i].name = 'H';
+		}
+		if (i == 8)
+		{
+			enemy[i].name = 'I';
+		}
+		if (i == 9)
+		{
+			enemy[i].name = 'J';
 		}
 	}
 	int imponum = 0;
 
-	while(imponum != IMPO_NUM)
+	while (imponum != IMPO_NUM)
 	{
 		int random = rand() % ENEMY_NUM;
 		if (enemy[random].isimpo == 0)
@@ -1272,39 +1164,61 @@ void CheckCrash()
 					a.x = enemy[j].x;
 					a.y = enemy[j].y;
 					a.name = enemy[j].name;
-					enemy[j].finish = 1;
 					enemy[j].liveFlag = 0;
-					dead_info[j] = a;
-					Sleep(100);
-					break;
+					dead_info.push_back(a);
 				}
 			}
 		}
 	}
 }
-int Find_deadbody()
+vector<deadbody>::iterator iter;
+void Find_deadbody()
 {
-	int i, x, y, j;
+	int i,x,y,j;
 	for (i = 0; i < ENEMY_NUM; i++)
 	{
-		if (enemy[i].isimpo == 0 && enemy[i].liveFlag == 1)
-		{
-			for (j = 0; j < ENEMY_NUM; j++)
+			if (enemy[i].isimpo == 0)
 			{
-				if (dead_info[j].already == 0 && enemy[i].x == dead_info[j].x && enemy[i].y == dead_info[j].y && find_dead == 0)
+
+				for (j=0 ; j < dead_info.size(); j++)
 				{
-					for (int p = 0; p < ENEMY_NUM; p++)
+					if (abs(enemy[i].x - dead_info[j].x) <= 1 && abs(enemy[i].y - dead_info[j].y) <= 1)
 					{
-						if(enemy[p].liveFlag == 0) dead_info[p].already = 1;
+						ShowFind();
+						cout << "DEAD BODY " << dead_info[j].name << " Founded" << endl;
+						int i;
+						for (i = 0; i < HEIGHT; i++)            // HEIGHT = 24
+						{
+							memset(screen[i], ' ', WIDTH);        //화면의  i번째 행들을 ' ' 공백으로 width의 길이만큼 넣어주고
+							for (int j = 0; j < WIDTH; j++)
+							{
+								screen[i][j] = gamemap[i][j];
+							}
+
+							screen[i][WIDTH - 1] = NULL;            // 마지막 width칸에 NULL을 넣어준다.
+						}
+						for (i = 0; i < HEIGHT; i++)
+						{
+							MoveCursor(0, i);        //  커서의 시작 지점 즉 y축을 바꾸어주며 한줄단위로 출력
+							printf(screen[i]);        //    화면의 i번째행 을 출력   ==  printf("%s",screen[i]);
+
+							MoveCursor(70, 23);
+						}
+						x = dead_info[j].x; y = dead_info[j].y;
+						while (screen[y][x] != ' ' && screen[y][x] != '=' && screen[y][x] != '|')
+							x = x + 1;
+						screen[y][x] = dead_info[j].name;
+						Sleep(1000);
+						for(iter = dead_info.begin(); iter !=  dead_info.end();iter++){
+							if ((*iter).name = dead_info[j].name)
+								dead_info.erase(iter);
+						}
+							
 					}
-					find_dead = 1;
-					return j;
 				}
 			}
-		}
-
+		
 	}
-	return 0;
 }
 
 
@@ -1315,12 +1229,10 @@ int CheckEndGame()
 {
 	checkpersonnum();
 	checkimponum();
-	if (person.num == imposter.num)
+	if (person.num == imposter.num * 2)
 	{
 		MoveCursor(36, 12);
 		printf("******************** Fail!! **************************");
-		MoveCursor(36, 13);
-		printf("그리고 아무도 없었다");
 		MoveCursor(0, 24);
 		Sleep(10000);
 
