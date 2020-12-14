@@ -12,8 +12,8 @@
 
 using namespace std;
 
-char screen[HEIGHT][WIDTH];        //    [행][열]
-char gamemap[HEIGHT][WIDTH] =
+//char screen[HEIGHT][WIDTH];        //    [행][열]
+//char gamemap[HEIGHT][WIDTH] =
 {
 	"==============================================================================|\n",
 	"|                                                                             |\n",
