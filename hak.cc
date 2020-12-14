@@ -164,7 +164,7 @@ void ShowFind();
 //struct impoinfo
 //{
 //	int num;
-};
+//};
 
 struct personinfo
 {
