@@ -166,7 +166,7 @@ void ShowFind();
 //	int num;
 //};
 
-struct personinfo
+//struct personinfo
 {
 	int num;
 };
