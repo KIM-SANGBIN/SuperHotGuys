@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <memory.h>
 #include <time.h>
@@ -9,31 +9,33 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <vector>
+#include <chrono>
 
 using namespace std;
+using namespace chrono;
 
 char screen[HEIGHT][WIDTH];        //    [행][열]
 char gamemap[HEIGHT][WIDTH] =
 {
 	"==============================================================================|\n",
-	"|                                                                             |\n",
-	"|   |==========|   |==============|   |==================|   |============|   |\n",
-	"|   |          |   |              |   |                  |   |            |   |\n",
-	"|   |          |   |              |   |                  |   |            |   |\n",
-	"|   |          |   |              |   |                  |   |            |   |\n",
-	"|   |          |   |              |   |                  |   |            |   |\n",
-	"|   |          |   |              |   |                  |   |            |   |\n",
-	"|   |          |   |              |   |                  |   |            |   |\n",
-	"|   |           ===               |   |                   ===             |   |\n",
-	"|   |                             |   |                                   |   |\n",
-	"|   |                             |   |                                   |   |\n",
-	"|   |                             |   |                                   |   |\n",
-	"|   |                             |   |                                   |   |\n",
-	"|   |                             |   |                                   |   |\n",
-	"|   |                             |   |                                   |   |\n",
-	"|   |                             |   |                                   |   |\n",
-	"|   |=============================|   |===================================|   |\n",
-	"|                                                                             |\n",
+	"(                                                                             )\n",
+	")   )==========)   )==============(   (==================(   (============)   )\n",
+	"(   (          (   (              )   )          *       )   )            (   (\n",
+	")   )  *       )   )        *     (   (      *     *     (   (      *     )   )\n",
+	"(   (       *  (   (  *           )   )   *              )   ) *       *  (   (\n",
+	")   )     *    )   )    *     *   (   (          *       (   (   *        )   )\n",
+	"(   (  *       (   (      *       )   )    *        *    )   )    *       (   (\n",
+	")   )        * )   )              (   (         *        (   (  *      *  )   )\n",
+	"(   (          (===(     *        )   )            *     )===)            (   (\n",
+	")   )     *                *      (   (       *              *     *  *   )   )\n",
+	"(   (   *         *               )   )     *        *        *           (   (\n",
+	")   )               *      *      (   (            *       *       *      )   )\n",
+	"(   (                             )   )      *    *    *             *    (   (\n",
+	")   )      *             *        (   (        *     *             *  *   )   )\n",
+	"(   (    *           *            )   )           *           *           (   (\n",
+	")   )                             (   (                  *                )   )\n",
+	"(   (=============================)   )===================================(   (\n",
+	")                                                                             )\n",
 	"===============================================================================\n",
 	"                     Who is the Imposter?               A                      \n",
 	" Dead :                                                 B                      \n",
@@ -49,30 +51,30 @@ char gamemap[HEIGHT][WIDTH] =
 };
 char sabotagemap[HEIGHT][WIDTH] =
 {
-	"     @@@@@@*@=====@@@@@@@@                   .-!=;-                            \n",
-	"     @@@@@@===!!!====@@@@@                  *!     #,                          \n",
-	"     @@@@==;,.,,-,.:==@@@@                 *        ,$ -$*                     \n",
-	"     @@@=*,---,,,--,.*=@@@               ,!           @= ~!                    \n",
-	"     @@==,,-.  .  .,-,*=@@               !            =$  ~~                   \n",
-	"     @@=,-,    ,    .-,=@@               !            =$  ~~                   \n",
-	"     @=:--     ,     ,-~=@               @         ,   #@~ :.                  \n",
-	"     @=--     .,.     -,=@              -@       :~#@  ,@@- $                  \n",
-	"     =*--     ,,.     ,-;=              :@    .=@: .;~  -@$ ,:                 \n",
-	"     =;-,     ,,.,    .-:=              :@**@=*~.    ;   =@; #.                \n",
-	"     =;-.    .,,,,    .-~=              ~@@.-~~,,,   =.   @@  :                \n",
-	"     =;-,    ,.,,.    .-:=            . -@@~~~~~~,   =;   !@$ =     .          \n",
-	"     =*:-     .,,     ,~!=         .    ,@@;~~~~~~~~ $,    @@  :    .          \n",
-	"     @=~-      ,.     -:=@         .     @@;~~~~~~~;;-     !@= #               \n",
-	"     @=:~-     ,     ,-:=@         .     @@@*****=$;       -@@ @               \n",
-	"     @@=:-,    ,    .-;*$@         .     @@@@=!~            #@@*               \n",
-	"     @@$*;--.  .   ,-;*=@@         .     @@@@               ,@@:               \n",
+	"     @@@@@@*@=====@@@@@@@@                   .@@@@@                            \n",
+	"     @@@@@@===!!!====@@@@@                  @!     @@                          \n",
+	"     @@@@==;,.,,-,.:==@@@@                 @        @@ -$*                     \n",
+	"     @@@=*,---,,,--,.*=@@@               ,@           @= ~!                    \n",
+	"     @@==,,-.  @  .,-,*=@@               @            =$ ~~                    \n",
+	"     @@=,-,    @    .-,=@@               @            =$:~~                    \n",
+	"     @=:--     @@    ,-~=@               @         ,   #@~ :.                  \n",
+	"     @=--     .@@@    -,=@              -@       :~#@  ,@@- $                  \n",
+	"     @*--     ,@@@@   ,-;@              :@    .=@: .#~  -@$ ,:                 \n",
+	"     @;-,      @@@@@  .-:@              :@**@=*~.    #   =@; #.                \n",
+	"     @;-.    . @@@@@@ .-~@              ~@@.-~~,,,   #.   @@  :                \n",
+	"     @;-, @@@@@@,.    .-:@            . -@@~~~~~~,   #;   !@$ =     .          \n",
+	"     @*:-  @@@@@,     ,~!@         .    ,@@;~~~~~~~~ $,    @@  :    .          \n",
+	"     @=~-   @@@@.     -:=@         .     @@;~~~~~~~;##     !@= #               \n",
+	"     @=:~-   @@@     ,-:=@         .     @@@*****=$;       -@@ @               \n",
+	"     @@=:-,   @@    .-;*$@         .     @@@@=!~            #@@*               \n",
+	"     @@$*;--.  @   ,-;*=@@         .     @@@@               ,@@:               \n",
 	"     @@@==;~--,..--~;*=@@@         .     @@@@                @@.  .            \n",
-	"     @@@@==!!;:~~;!!==@@@@               @@@@                ::                \n",
-	"     @@@@@@===!!!*==@@@@@@         .     *!!=                ;.                \n",
+	"     @@@@==!!;:~~;!!==@@@@               @@@@                @##               \n",
+	"     @@@@@@===!!!*==@@@@@@         .     @@@@                @##               \n",
 	"     @@@@@@@@$====@@@@@@@@                                                     \n"
 
 };
-char MainScreen[HEIGHT][WIDTH] = {
+char mainscreen[HEIGHT][WIDTH] = {
 
 	"                                                               ~;***!!:        \n",
 	"     @@@.  @@.    @@.  @@@@@.  @@.     @.   @@@@@@.          .#@@@@@@@@#.      \n",
@@ -98,33 +100,33 @@ char MainScreen[HEIGHT][WIDTH] = {
 };
 char findmap[HEIGHT][WIDTH] =
 {
-	"							.; =$;.$										 \n",
-	"							 =   @  @										 \n",
-	"							  $   .@										 \n",
-	"							   *  =											 \n",
-	"							   -  *      .;;;								 \n",
-	"							   -. *     @.   #								 \n",
-	"						@@@-   ,. # ,@#@-    @								 \n",
-	"						:  ,@#@#$#@@-   @    =								 \n",
-	"						-               $    *								\n",
-	"						-               =    !		DEAD REPORT!!!          \n",
-	"						-               $    !		Someone died 			\n",
-	"						~               $    !								\n",
-	"						;               $    !								\n",
-	"						*               $    !								\n",
-	"						#               #    @								\n",
-	"						@               #   =!								\n",
-	"						@   @@@@@@@     #*:,								\n",
-	"						$     =   @     @									\n",
-	"						~     =   @     @									\n",
-	"						 :    =   @     @									\n",
-	"						 @   .-   @     @									\n",
-	"						 !,  @    @     *									\n",
+	"                     =@@@ ;=$@                                                \n",
+	"                      =@ *@  @              @@@  @@@   @   @@@                \n",
+	"                       @   .@               @  @ @    @ @  @  @               \n",
+	"                        *  =                @  @ @@@ @@@@@ @  @               \n",
+	"                        @  @      @@##      @  @ @   @   @ @  @               \n",
+	"                        @. #     @.   #     @@@  @@@ @   @ @@@                \n",
+	"                  @@@#@# ,. # ,@#@-    @                                      \n",
+	"                  @  ,@#@#$#@@-   @    =    @@@  @@@ @@@@   @@  @@@  @@@@@    \n",
+	"                  @               $    *    @  @ @   @   @ @  @ @  @   @      \n",
+	"                  @               =    !    @@@  @@@ @@@@  @  @ @@@    @      \n",
+	"                  $               $    !    @  @ @   @     @  @ @  @   @      \n",
+	"                  @               $    !    @  @ @@@ @      @@  @  @   @      \n",
+	"                  @               $    !     ||||     ||||     ||||           \n",
+	"                  *               $    !   - @@@@ -   @@@@ -   @@@@ -         \n",
+	"                  #               #    @    @   @@   @   @@   @   @@  -       \n",
+	"                  @               #   =!    @ @@ @   @ @@ @   @ @@ @  -       \n",
+	"                  @   @@@@@@@     #*#@@      @@@@     @@@@     @@@@  -        \n",
+	"                  $     @   @     @           @@       @@       @@  -         \n",
+	"                  @     @   @     @           ::       :;       ::            \n",
+	"                   #    @   @     @           @@       @@       @@            \n",
+	"                   @   .-   @     @                                           \n",
+	"                   !===@@   @=====*                                           \n"
 };
-#define ENEMY_NUM 10
+#define Enemy_NUM 10
 #define E_COUNT 3
-#define ENEMY_LINE 3
-#define ENEMY_FLIGHT 10
+#define Enemy_LINE 3
+#define Enemy_FLIGHT 10
 #define IMPO_NUM 2
 
 int stagecount = 0;
@@ -133,80 +135,75 @@ char eUnit[E_COUNT + 1] = "=.=";
 int find_dead = 0;
 
 //---------------함수들-------------//
-int StartGameAction2();
-void startgameaction();
-
-void startgameinitialobject();
+int StartGame_Action2();
+int Check_DeadPerson();
+int Check_EndGame();
+int Check_ClearGame();
+int Find_DeadBody();
+void StartGame_Action();
+void StartGame_Initialobject();
 void DrawMain();
 void DrawStartGame();
 void SetStartPosition();
-void checkimponum();
-void checkpersonnum();
-int checkdeadperson();
+void Check_ImpoNum();
+void Check_PersonNum();
 void EnemyAction();
-void DrawEnemy();
+void Drawenemy();
 void Draw();
-int CheckEndGame();
-int CheckClearGame();
 void EnemyInitialObject();
 void CheckCrash();
-void selectimpoobject();
-void selectimpoaction();
-void selectimpoaction2();
-void drawselectimpo();
-int Find_deadbody();
+void Select_ImpoObject();
+void Select_ImpoAction();
+void Select_ImpoAction2();
+void Draw_SelectImpo();
 void ShowFind();
+int Check_FiveSeconds();
 //----------------------------------------//
 
 //----------------함수들--------------//
 
 
-struct impoinfo
+struct Impo_Info
 {
 	int num;
 };
 
-struct personinfo
+struct Person_Info
 {
 	int num;
 };
-struct EnemyInfo {
+struct Enemy_Info {
 	int x, y;
 	int liveFlag;
-	/*int StartX;           //    기준점좌표값 x - StartX 절대값을 구해서.
-	int StartY;
-	int movex;
-	int movey;
-	int ismoving;*/
 	char name;
 	int isimpo;
 	int pathnum;            //경로지정
 	int walknum;            //경로 내에서 걸어간 횟수
 	int finish = 0;
+	int kill = 1;
+	system_clock::time_point StartTime;
 };
 
-typedef struct dead_body {
-	int x, y, already=0;
+typedef struct Dead_Body {
+	int x, y, already = 0;
 	char name;
-}deadbody;
+}DeadBody;
 
-
-
-struct startinfo
+struct Start_Info
 {
 	int x, y;
 };
 
-struct selectinfo
+struct Select_Info
 {
 	int x, y;
 };
-struct personinfo person;
-struct startinfo startgame;
-struct impoinfo imposter;
-struct EnemyInfo enemy[ENEMY_NUM];
-struct selectinfo selectimpo;
-deadbody dead_info[ENEMY_NUM];
+struct Person_Info person;
+struct Start_Info startgame;
+struct Impo_Info imposter;
+struct Enemy_Info enemy[Enemy_NUM];
+struct Select_Info selectimpo;
+DeadBody dead_info[Enemy_NUM];
 //--------------------struct-----------------------//
 
 int main()
@@ -215,7 +212,7 @@ int main()
 	int report_x, report_y;
 	srand((unsigned)time(NULL));
 	Initial();
-	startgameinitialobject();
+	StartGame_Initialobject();
 	while (1)
 	{
 		int count = 0;
@@ -225,36 +222,27 @@ int main()
 		{
 
 
-				startgameaction();
-				DrawMain();
-				if (StartGameAction2() == 1)
-					stagecount++;
-				else if (StartGameAction2() == 2)
-					break;
-			
+			StartGame_Action();
+			DrawMain();
+			if (StartGame_Action2() == 1)
+				stagecount++;
+			else if (StartGame_Action2() == 2)
+				break;
+
 			Sleep(100);
 
 			SetStartPosition();
-			selectimpoobject();
+			Select_ImpoObject();
 		}
-
-		
 		while (stagecount == 1)
 		{
-			
 			Initial();
+
 			EnemyAction();
-			selectimpoaction();
-			selectimpoaction2();
 
 			if (find_dead == 0 && (count >= 40) && (count % 40 >= 0) && (count % 100 <= 20))
 				lightoff = 1;
 
-				
-			/*if (CheckEndGame() == 1)
-				break;
-				if (CheckClearGame() == 1)
-				stagecount++;*/
 			if (!lightoff)
 			{
 				Draw();
@@ -280,9 +268,7 @@ int main()
 					MoveCursor(70, 23);
 				}
 				CheckCrash();
-				Sleep(50);
-
-				dead_index = Find_deadbody();
+				dead_index = Find_DeadBody();
 				if (find_dead)
 				{
 					stagecount = 2;
@@ -296,69 +282,57 @@ int main()
 
 
 			}
-			//if (CheckEndGame() == 1)
-			//	break;
-			if (CheckClearGame() == 1)
-				break;
+			if (Check_EndGame() == 1)
+				return 0;
+
+			if (Check_ClearGame() == 1)
+				return 0;
 			Sleep(1);
 			count++;
 		}
-
 		while (stagecount == 2)
 		{
-			//ShowFind();
 			MoveCursor(5, 35);
 			cout << "DEAD BODY " << dead_info[dead_index].name << " Founded" << endl;
 			MoveCursor(5, 37);
 			cout << dead_info[dead_index].name << "가 죽어버렸당께!";
 			int i;
-	/*		for (i = 0; i < HEIGHT; i++)            // HEIGHT = 24
-			{
-				memset(screen[i], ' ', WIDTH);        //화면의  i번째 행들을 ' ' 공백으로 width의 길이만큼 넣어주고
-				for (int j = 0; j < WIDTH; j++)
-				{
-					screen[i][j] = gamemap[i][j];
-				}
-
-				screen[i][WIDTH - 1] = NULL;            // 마지막 width칸에 NULL을 넣어준다.
-			}
-			for (i = 0; i < HEIGHT; i++)
-			{
-				MoveCursor(0, i);        //  커서의 시작 지점 즉 y축을 바꾸어주며 한줄단위로 출력
-				printf(screen[i]);        //    화면의 i번째행 을 출력   ==  printf("%s",screen[i]);
-
-				//MoveCursor(70, 23);
-			}*/
 			report_x = dead_info[dead_index].y; report_y = dead_info[dead_index].x;
-			MoveCursor(report_y, report_x);
-			cout << "♧" << dead_info[dead_index].name  <<"♧ <=여기 조용히 묻히다..";
-			
-		
-	
-			//MoveCursor(30, 25);
 			Draw();
-			drawselectimpo();
-			selectimpoaction();
-			selectimpoaction2();
-
-			//dead_info[dead_index].x = -20;
-			//dead_info[dead_index].y = -20;
+			Draw_SelectImpo();
+			MoveCursor(report_y - 1, report_x - 1);
+			cout << "♧ ♧";
+			MoveCursor(report_y, report_x);
+			cout <<" "<<dead_info[dead_index].name;
+			MoveCursor(report_y-1, report_x+1);
+			cout << "♧ ♧ 이 곳에 조용히 묻히다..";
+			Select_ImpoAction();
+			Select_ImpoAction2();
 			find_dead = 0;
 		}
 
-		if (CheckEndGame() == 1)
-			break;
-		if (CheckClearGame() == 1)
-			break;
-
-		Sleep(50);
+		if (Check_EndGame() == 1)
+			return 0;
+		if (Check_ClearGame() == 1)
+			return 0;
+		ClearScreen();
+		// Sleep(50);
 
 	}
 	return 0;
-
 }
 
-void startgameaction()
+
+int Check_FiveSeconds(struct Enemy_Info a) {
+	system_clock::time_point end = system_clock::now();
+	seconds sec = duration_cast<seconds>(end - a.StartTime);
+	if (sec.count() >= 5)
+		return 1;
+	else return 0;
+}
+
+
+void StartGame_Action()
 {
 	if (stagecount == 0)
 	{
@@ -379,9 +353,8 @@ void startgameaction()
 	}
 }
 
-void selectimpoaction()
+void Select_ImpoAction()
 {
-
 	if ((GetAsyncKeyState(VK_UP) & 0x8000))
 	{
 		if (selectimpo.y > 20)
@@ -399,7 +372,7 @@ void selectimpoaction()
 
 }
 
-void startgameinitialobject()
+void StartGame_Initialobject()
 {
 	startgame.x = 32;
 	startgame.y = 21;
@@ -407,7 +380,7 @@ void startgameinitialobject()
 	int y = startgame.y;
 }
 
-void selectimpoobject()
+void Select_ImpoObject()
 {
 	selectimpo.x = 50;
 	selectimpo.y = 20;
@@ -424,12 +397,12 @@ void DrawStartGame()
 	for (i = 0; i < 2; i++)
 	{
 		if (x >= 31 && x < 33 && y >= 21 && y <= 22)
-			MainScreen[y][x] = startcursor[i];
+			mainscreen[y][x] = startcursor[i];
 		x++;
 	}
 }
 
-void drawselectimpo()
+void Draw_SelectImpo()
 {
 	int i;
 	int x = selectimpo.x - 1;
@@ -460,11 +433,8 @@ void ShowFind()
 	{
 		MoveCursor(0, i);        //  커서의 시작 지점 즉 y축을 바꾸어주며 한줄단위로 출력
 		printf(screen[i]);        //    화면의 i번째행 을 출력   ==  printf("%s",screen[i]);
-		//MoveCursor(70, 23);
 	}
-	//Sleep(500);
 }
-
 
 
 void DrawMain()
@@ -472,9 +442,9 @@ void DrawMain()
 	int i;
 	for (i = 0; i < HEIGHT; i++)
 	{
-		strcpy(MainScreen[21], "                                  Start Game                                   \n");
-		strcpy(MainScreen[22], "                                  End Game                                     \n");
-		MainScreen[i][WIDTH - 1] = NULL;
+		strcpy(mainscreen[21], "                                  Start Game                                   \n");
+		strcpy(mainscreen[22], "                                  End Game                                     \n");
+		mainscreen[i][WIDTH - 1] = NULL;
 	}
 
 	DrawStartGame();
@@ -482,11 +452,11 @@ void DrawMain()
 	for (i = 0; i < HEIGHT; i++)
 	{
 		MoveCursor(0, i);
-		printf(MainScreen[i]);
+		printf(mainscreen[i]);
 	}
 }
 
-int StartGameAction2()
+int StartGame_Action2()
 {
 	if (stagecount == 0)
 	{
@@ -504,7 +474,7 @@ int StartGameAction2()
 	}
 }
 
-void selectimpoaction2()
+void Select_ImpoAction2()
 {
 	if (stagecount == 2)
 	{
@@ -723,11 +693,20 @@ void selectimpoaction2()
 			}
 
 			stagecount = 1;
+			for (int z = 0; z < Enemy_NUM; z++)
+			{
+				if (enemy[z].liveFlag == 1)
+				{
+					enemy[z].x = 35;
+					enemy[z].y = 1;
+					enemy[z].walknum = 0;
+					enemy[z].pathnum = 0;
+				}
+			}
+			ClearScreen();
 		}
-		
+
 	}
-
-
 }
 
 
@@ -736,15 +715,14 @@ void SetStartPosition() {
 
 	Initial();                    // 커서 안보이게
 	imposter.num = IMPO_NUM;
-	person.num = ENEMY_NUM;
+	person.num = Enemy_NUM;
 	EnemyInitialObject();
-
 }
 
 void EnemyAction()
 {
 	int i;
-	for (i = 0; i < ENEMY_NUM; i++)
+	for (i = 0; i < Enemy_NUM; i++)
 	{
 		if (enemy[i].liveFlag && enemy[i].finish == 0)
 		{
@@ -1097,9 +1075,8 @@ void Draw()
 		screen[i][WIDTH - 1] = NULL;            // 마지막 width칸에 NULL을 넣어준다.
 	}
 
-
-	DrawEnemy();        // 적비행기 출력
-	drawselectimpo();
+	Drawenemy();
+	Draw_SelectImpo();
 
 	Sleep(100);
 	for (i = 0; i < HEIGHT; i++)
@@ -1108,21 +1085,21 @@ void Draw()
 		printf(screen[i]);        //    화면의 i번째행 을 출력   ==  printf("%s",screen[i]);
 
 		MoveCursor(60, 23);
-		checkimponum();
+		Check_ImpoNum();
 		printf("Left Imposter : %d", imposter.num);
 		MoveCursor(60, 24);
-		checkpersonnum();
+		Check_PersonNum();
 		printf("Left Person : %d", person.num);
 
 	}
 }
 
-void DrawEnemy()
+void Drawenemy()
 {
 
 	int i;
 	int x = 0, y = 0;
-	for (i = 0; i < ENEMY_NUM; i++)
+	for (i = 0; i < Enemy_NUM; i++)
 	{
 		if (enemy[i].liveFlag == 1)
 		{
@@ -1142,18 +1119,13 @@ void DrawEnemy()
 }
 
 
-
-
 void EnemyInitialObject()
 {
 	int i = 0;
-	for (i = 0; i < ENEMY_NUM; i++)
+	for (i = 0; i < Enemy_NUM; i++)
 	{
 		if (enemy[i].finish != 1)
 		{
-
-
-
 			enemy[i].x = 35;
 			enemy[i].y = 1;
 			enemy[i].liveFlag = 1;
@@ -1202,26 +1174,29 @@ void EnemyInitialObject()
 			}
 		}
 	}
-	int imponum = 0;
+	Check_ImpoNum();
 
-	while(imponum != IMPO_NUM)
+	if (imposter.num == 0)
 	{
-		int random = rand() % ENEMY_NUM;
-		if (enemy[random].isimpo == 0)
+		int imponum = 0;
+		while (imponum != IMPO_NUM)
 		{
-			enemy[random].isimpo = 1;
-			imponum++;
+			int random = rand() % Enemy_NUM;
+			if (enemy[random].isimpo == 0)
+			{
+				enemy[random].isimpo = 1;
+				imponum++;
+			}
+			else
+				continue;
 		}
-		else
-			continue;
-
 	}
 }
 
-void checkimponum()
+void Check_ImpoNum()
 {
 	int count = 0;
-	for (int i = 0; i < ENEMY_NUM; i++)
+	for (int i = 0; i < Enemy_NUM; i++)
 	{
 		if (enemy[i].isimpo && enemy[i].liveFlag)
 		{
@@ -1231,10 +1206,10 @@ void checkimponum()
 	imposter.num = count;
 }
 
-void checkpersonnum()
+void Check_PersonNum()
 {
 	int count = 0;
-	for (int i = 0; i < ENEMY_NUM; i++)
+	for (int i = 0; i < Enemy_NUM; i++)
 	{
 		if (enemy[i].isimpo == 0 && enemy[i].liveFlag)
 		{
@@ -1244,10 +1219,10 @@ void checkpersonnum()
 	person.num = count;
 }
 
-int checkdeadperson()
+int Check_DeadPerson()
 {
 	int count = 0;
-	for (int i = 0; i < ENEMY_NUM; i++)
+	for (int i = 0; i < Enemy_NUM; i++)
 	{
 		if (enemy[i].isimpo == 0 && enemy[i].liveFlag == 0)
 		{
@@ -1260,21 +1235,27 @@ int checkdeadperson()
 void CheckCrash()
 {
 	int i, j;
-	for (i = 0; i < ENEMY_NUM; i++)
+	for (i = 0; i < Enemy_NUM; i++)
 	{
 		if (enemy[i].isimpo == 1)
 		{
-			for (j = 0; j < ENEMY_NUM; j++)
+			if (Check_FiveSeconds(enemy[i]))
+				enemy[i].kill = 1;
+			for (j = 0; j < Enemy_NUM; j++)
 			{
-				if (abs(enemy[i].x - enemy[j].x) <= 1 && abs(enemy[i].y - enemy[j].y) <= 1 && enemy[j].isimpo == 0)
+				if (enemy[i].kill == 1 && abs(enemy[i].x - enemy[j].x) <= 1 && abs(enemy[i].y - enemy[j].y) <= 1 && enemy[j].isimpo == 0)
 				{
-					deadbody a;
+					DeadBody a;
 					a.x = enemy[j].x;
 					a.y = enemy[j].y;
 					a.name = enemy[j].name;
 					enemy[j].finish = 1;
 					enemy[j].liveFlag = 0;
 					dead_info[j] = a;
+					system_clock::time_point killtime;
+					killtime = system_clock::now();
+					enemy[i].StartTime = killtime;
+					enemy[i].kill = 0;
 					Sleep(100);
 					break;
 				}
@@ -1282,45 +1263,68 @@ void CheckCrash()
 		}
 	}
 }
-int Find_deadbody()
+
+int Find_DeadBody()
 {
 	int i, x, y, j;
-	for (i = 0; i < ENEMY_NUM; i++)
+	for (i = 0; i < Enemy_NUM; i++)
 	{
 		if (enemy[i].isimpo == 0 && enemy[i].liveFlag == 1)
 		{
-			for (j = 0; j < ENEMY_NUM; j++)
+			for (j = 0; j < Enemy_NUM; j++)
 			{
 				if (dead_info[j].already == 0 && enemy[i].x == dead_info[j].x && enemy[i].y == dead_info[j].y && find_dead == 0)
 				{
-					for (int p = 0; p < ENEMY_NUM; p++)
+					for (int p = 0; p < Enemy_NUM; p++)
 					{
-						if(enemy[p].liveFlag == 0) dead_info[p].already = 1;
+						if (enemy[p].liveFlag == 0) dead_info[p].already = 1;
 					}
 					find_dead = 1;
 					return j;
 				}
 			}
 		}
-
 	}
 	return 0;
 }
 
 
 
-
-
-int CheckEndGame()
+int Check_EndGame()
 {
-	checkpersonnum();
-	checkimponum();
-	if (person.num == imposter.num)
+	Check_PersonNum();
+	Check_ImpoNum();
+	if (person.num <= imposter.num)
 	{
-		MoveCursor(36, 12);
-		printf("******************** Fail!! **************************");
-		MoveCursor(36, 13);
-		printf("그리고 아무도 없었다");
+		MoveCursor(1, 1);
+
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("   @@@@@@@@@@@@@@@@@      @@@        @@@@@@@@@@   @@              @@@@            \n");
+		printf("   @@@@@@@@@@@@@@@@@     @@ @@       @@@@@@@@@@   @@              @@@@            \n");
+		printf("   @@                    @@ @@           @@       @@              @@@@            \n");
+		printf("   @@                   @@   @@          @@       @@              @@@@            \n");
+		printf("   @@                  @@     @@         @@       @@              @@@@            \n");
+		printf("   @@                 @@       @@        @@       @@              @@@@            \n");
+		printf("   @@@@@@@@@@@@@@@@@  @@@@@@@@@@@        @@       @@              @@@@            \n");
+		printf("   @@@@@@@@@@@@@@@@@  @@@@@@@@@@@        @@       @@              @@@@            \n");
+		printf("   @@                @@         @@       @@       @@              @@@@            \n");
+		printf("   @@                @@         @@       @@       @@              @@@@            \n");
+		printf("   @@                @@         @@       @@       @@              @@@@            \n");
+		printf("   @@                @@         @@       @@       @@                              \n");
+		printf("   @@                @@         @@   @@@@@@@@@@   @@@@@@@@@@@@@@  @@@@            \n");
+		printf("   @@                @@         @@   @@@@@@@@@@   @@@@@@@@@@@@@@  @@@@            \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
 		MoveCursor(0, 24);
 		Sleep(10000);
 
@@ -1333,21 +1337,46 @@ int CheckEndGame()
 }
 
 
-int CheckClearGame()
+int Check_ClearGame()
 {
-	checkimponum();
+	Check_ImpoNum();
 	if (imposter.num == 0)
 	{
-		MoveCursor(36, 12);
-		printf("******************** Clear!! **************************");
-		MoveCursor(0, 24);
+		MoveCursor(1, 1);
+
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("     @@@@@@@@@  @@        @@@@@@@@@@      @@@       @@@@@@@@@@@@@      @@@@       \n");
+		printf("    @@@@@@@@@@  @@        @@@@@@@@@@     @@ @@      @@          @@     @@@@       \n");
+		printf("   @@           @@        @@            @@   @@     @@           @@    @@@@       \n");
+		printf("   @@           @@        @@           @@     @@    @@           @@    @@@@       \n");
+		printf("   @@           @@        @@@@@@@@@@  @@       @@   @@           @@    @@@@       \n");
+		printf("   @@           @@        @@@@@@@@@@  @@@@@@@@@@@   @@          @@     @@@@       \n");
+		printf("   @@           @@        @@          @@@@@@@@@@@   @@@@@@@@@@@@@      @@@@       \n");
+		printf("   @@           @@        @@         @@         @@  @@          @@     @@@@       \n");
+		printf("   @@           @@        @@         @@         @@  @@           @@ .             \n");
+		printf("   @@           @@        @@         @@         @@  @@           @@    @@@@       \n");
+		printf("    @@@@@@@@@@  @@@@@@@@@ @@@@@@@@@@ @@         @@  @@           @@    @@@@       \n");
+		printf("     @@@@@@@@@  @@@@@@@@@ @@@@@@@@@@ @@         @@  @@           @@    @@@@       \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+		printf("                                                                                  \n");
+
+
 		Sleep(10000);
 		return 1;
 	}
 	else return 0;
 }
 //------------------------------------------------------//
-
-
-
-
