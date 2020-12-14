@@ -166,9 +166,9 @@ struct impoinfo
 	int num;
 };
 
-struct personinfo
-{
-	int num;
+//struct personinfo
+//{
+//	int num;
 };
 struct EnemyInfo {
 	int x, y;
