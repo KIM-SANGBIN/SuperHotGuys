@@ -1,2 +1,0 @@
-# SuperHotGuys
-we are superhot
