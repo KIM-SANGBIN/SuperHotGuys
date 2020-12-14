@@ -178,22 +178,7 @@ int find_dead = 0;
 //					/*int StartX;           //    기준점좌표값 x - StartX 절대값을 구해서.
 //						int StartY;
 //							int movex;
-//								int movey;
-//									int ismoving;*/
-//										char name;
-//											int isimpo;
-//												int pathnum;            //경로지정
-//													int walknum;            //경로 내에서 걸어간 횟수
-//														int finish = 0;
-//														};
-//
-//														typedef struct dead_body {
-//															int x, y, already = 0;
-//																char name;
-//																}deadbody;
-//
-//
-//
+//			//
 //																struct startinfo
 //																{
 //																	int x, y;
